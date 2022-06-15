@@ -1,6 +1,76 @@
 <?php 
 require_once('config.php');
 session_start();
+if(!isset($_SESSION['st_loggedin'])){
+	header('location:login.php');
+}
+
+$user_id = $_SESSION['st_loggedin'][0]['id'];
+
+if(isset($_POST['st_email_send_btn'])){
+	$user_email = Student('email',$user_id);
+
+	$code = rand(9999,999999);
+
+	$subject = "PSMS - Email Verification.";
+	$message = "
+	<html>
+		<head>
+			<title>Email Verification</title>
+		</head>
+		<body>
+			<p><b>Email Verification.</b></p>
+			<table>
+				<tr>
+					<th>Code</th>
+					<th>.$code.</th>
+				</tr>
+			</table>
+			<p>Thanks.</p>
+		</body>
+	</html>
+	";
+
+	// Always set content-type when sending HTML email
+	$headers = "MIME-Version: 1.0" . "\r\n";
+	$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+	
+	// More headers
+	$headers .= 'From: <'.$user_email.'>' . "\r\n";
+
+	$send_mail = mail($user_email,$subject,$message,$headers);
+
+	if($send_mail == true){
+		$stm = $pdo->prepare("UPDATE SET email_code=? WHERE id=?");
+		$stm->execute(array($code,$user_id));
+
+		$_SESSION['email_code_send'] = 1;
+		$success = "Code Send Success, please check your Register Email"; 
+	}
+	else{
+		$error = "Email send Failed!";
+	}
+	
+}
+
+//Verify Email Code
+is(isset($_POST['st_email_verify_btn'])){
+	$st_code = $_POST['st_email_code'];
+	$db_code = Student('email_code',$user_id);
+	if(empty($st_code)){
+		$error = "Email code is Required!";
+	}
+	else if($st_code != $db_code){
+		$error = "Email Code does't Match!"
+	}
+	else{
+		$stm = $pdo->prepare("UPDATE students SET email_code=?,is_email_verified=? WHERE id=?");
+		$stm->execute(array(null,1,$user_id));
+		$success = "Your Email Verify Success!";
+	}
+}
+
+
 if(isset($_POST['st_login_btn'])){
 	$st_username = $_POST['st_username'];
 	$st_password = $_POST['st_password'];
@@ -30,9 +100,7 @@ if(isset($_POST['st_login_btn'])){
 			}
 			else{
 				header('location:verify.php');
-			}
-
-
+			} 
 		}
 		else{
 			$error = "username or Password is wrong! try again!";
@@ -57,11 +125,11 @@ if(isset($_POST['st_login_btn'])){
 	<meta name="robots" content="" />
 	
 	<!-- DESCRIPTION -->
-	<meta name="description" content="PSMS - Student Login" />
+	<meta name="description" content="PSMS - Student Verification" />
 	
 	<!-- OG -->
-	<meta property="og:title" content="PSMS - Student Login" />
-	<meta property="og:description" content="PSMS - Student Login" />
+	<meta property="og:title" content="PSMS - Student Verification" />
+	<meta property="og:description" content="PSMS - Student Verification" />
 	<meta property="og:image" content="" />
 	<meta name="format-detection" content="telephone=no">
 	
@@ -70,7 +138,7 @@ if(isset($_POST['st_login_btn'])){
 	<link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.png" />
 	
 	<!-- PAGE TITLE HERE ============================================= -->
-	<title>PSMS - Student Login</title>
+	<title>PSMS - Student Verification</title>
 	
 	<!-- MOBILE SPECIFIC ============================================= -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -104,46 +172,62 @@ if(isset($_POST['st_login_btn'])){
 		<div class="account-form-inner">
 			<div class="account-container">
 				<div class="heading-bx left">
-					<h2 class="title-head">Student <span>Login</span></h2>
-					<p>Don't have an account? <a href="registration.php">Registration Now</a></p>
+					<h2 class="title-head">Student <span>Verification</span></h2>
+					<p> <u><?php echo Student('name',$_SESSION['st_loggedin'][0]['id']); ?></u> Please Verify Your Account</p>
 				</div>	
-				<form class="contact-bx" method="POST" action="">
 					<?php if(isset($error)): ?>
 					<div class="alert alert-danger">
 						<?php echo $error ?>
 					</div>
 					<?php endif;?>
+					<?php 
+						$email_status = Student('is_email_verified',$_SESSION['st_loggedin'][0]['id']); 
+						$mobile_status = Student('is_mobile_verified',$_SESSION['st_loggedin'][0]['id']); 
+					?>
+					<p>Email: <?php 
+					if($email_status === 1){
+
+					}
+					else{
+						echo '<span class="badge badge-danger">Not Verified';
+					}
+					?></p>
+					<p>Mobile: <?php  
+					if($mobile_status === 1){
+
+					}
+					else{
+						echo '<span class="badge badge-danger">Not Verified';
+					}
+					?></p>
+				<?php if(isset($_SESSION['email_code_send']) == 1) : ?>
+				<form class="contact-bx" method="POST" action="">
 					<div class="row placeani">
 						<div class="col-lg-12">
 							<div class="form-group">
 								<div class="input-group">
-									<label>Email or Mobile Number</label>
-									<input name="st_username" type="text" class="form-control">
+									<label>Type Your Code</label>
+									<input name="st_email_code" type="text" class="form-control">
 								</div>
-							</div>
-						</div>
-						<div class="col-lg-12">
-							<div class="form-group">
-								<div class="input-group"> 
-									<label>Password</label>
-									<input name="st_password" type="password" class="form-control">
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-12">
-							<div class="form-group form-forget">
-								<div class="custom-control custom-checkbox">
-									<input type="checkbox" class="custom-control-input" id="customControlAutosizing">
-									<label class="custom-control-label" for="customControlAutosizing">Remember me</label>
-								</div>
-								<a href="forget-password.php" class="ml-auto">Forgot Password?</a>
 							</div>
 						</div>
 						<div class="col-lg-12 m-b30">
-							<button name="st_login_btn" type="submit" value="Submit" class="btn button-md">Login</button>
+							<button name="st_email_verify_btn" type="submit" value="Submit" class="btn button-md">Verify Email</button>
 						</div>
 					</div>
 				</form>
+				<?php else : ?>
+
+				<form class="contact-bx" method="POST" action="">
+					<div class="row placeani">
+						<div class="col-lg-12 m-b30">
+							<button name="st_email_send_btn" type="submit"  class="btn button-md">Click to Verify Email</button>
+						</div>
+					</div>
+				</form>
+
+				<?php endif;?>
+				
 			</div>
 		</div>
 	</div>
