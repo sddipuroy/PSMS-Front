@@ -1,9 +1,43 @@
+<?php 
+require_once('config.php');
+session_start();
+if(isset($_POST['st_login_btn'])){
+	$st_username = $_POST['st_username'];
+	$st_password = $_POST['st_password'];
+
+
+	if(empty($st_username)){
+		$error = "Email or Mobile Required!";
+	}
+	else if(empty($st_password)){
+		$error = "Password is Required!";
+	}
+	else{
+		$st_password = SHA1($st_password);
+		//Find Login User
+		$stCount = $pdo->prepare("SELECT id,email,mobile FROM students WHERE (email=? OR mobile=?) AND password=?");
+		$stCount->execute(array($st_username,$st_username,$st_password));
+		$loginCount = $stCount->rowCount();
+		if($loginCount == 1){
+			$stData = $stCount->fetchAll(PDO::FETCH_ASSOC);
+			$_SESSION['st_loggedin'] = $stData;
+			header('location:dashboard/index.php');
+		}
+		else{
+			$error = "username or Password is wrong! try again!";
+		}
+	}
+}
+
+if(isset($_SESSION['st_loggedin'])){
+	header('location:dashboard/index.php');
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-
-
 <head>
-
 	<!-- META ============================================= -->
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -63,12 +97,17 @@
 					<p>Don't have an account? <a href="registration.php">Registration Now</a></p>
 				</div>	
 				<form class="contact-bx" method="POST" action="">
+					<?php if(isset($error)): ?>
+					<div class="alert alert-danger">
+						<?php echo $error ?>
+					</div>
+					<?php endif;?>
 					<div class="row placeani">
 						<div class="col-lg-12">
 							<div class="form-group">
 								<div class="input-group">
 									<label>Email or Mobile Number</label>
-									<input name="st_username" type="text" required="" class="form-control">
+									<input name="st_username" type="text" class="form-control">
 								</div>
 							</div>
 						</div>
@@ -76,7 +115,7 @@
 							<div class="form-group">
 								<div class="input-group"> 
 									<label>Password</label>
-									<input name="st_password" type="password" class="form-control" required="">
+									<input name="st_password" type="password" class="form-control">
 								</div>
 							</div>
 						</div>

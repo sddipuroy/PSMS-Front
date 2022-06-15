@@ -107,7 +107,6 @@ if(isset($_POST['st_submit'])){
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 	<!-- META ============================================= -->
