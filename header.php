@@ -1,8 +1,10 @@
+<?php
+session_start();
+
+?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 	<!-- META ============================================= -->
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -69,8 +71,12 @@
 					</div>
 					<div class="topbar-right">
 						<ul>
+							<?php if(isset($_SESSION['st_loggedin'])):?>
+							<li><a href="dashboard/index.php">Student Dashboard</a></li>
+							<?php else : ?>
 							<li><a href="login.php">Login</a></li>
 							<li><a href="registration.php">Register</a></li>
+							<?php endif; ?>
 						</ul>
 					</div>
 				</div>
