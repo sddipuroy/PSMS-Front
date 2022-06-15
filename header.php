@@ -64,7 +64,7 @@
 					<div class="topbar-left">
 						<ul>
 							<li><a href="faq-1.html"><i class="fa fa-question-circle"></i>Ask a Question</a></li>
-							<li><a href="javascript:;"><i class="fa fa-envelope-o"></i>hello@coderitsolution.com</a></li>
+							<li><a href="https://coderitsolution.com/"><i class="fa fa-envelope-o"></i>hello@coderitsolution.com</a></li>
 						</ul>
 					</div>
 					<div class="topbar-right">
@@ -81,7 +81,7 @@
                 <div class="container clearfix">
 					<!-- Header Logo ==== -->
 					<div class="menu-logo">
-						<a href="index.html"><img src="assets/images/logos.png" alt=""></a>
+						<a href="index.php"><img src="assets/images/logos.png" alt=""></a>
 					</div>
 					<!-- Mobile Nav Button ==== -->
                     <button class="navbar-toggler collapsed menuicon justify-content-end" type="button" data-toggle="collapse" data-target="#menuDropdown" aria-controls="menuDropdown" aria-expanded="false" aria-label="Toggle navigation">
