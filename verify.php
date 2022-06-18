@@ -54,59 +54,61 @@ if(isset($_POST['st_email_send_btn'])){
 }
 
 //Verify Email Code
-is(isset($_POST['st_email_verify_btn'])){
+if(isset($_POST['st_email_verify_btn'])){
 	$st_code = $_POST['st_email_code'];
 	$db_code = Student('email_code',$user_id);
 	if(empty($st_code)){
 		$error = "Email code is Required!";
 	}
 	else if($st_code != $db_code){
-		$error = "Email Code does't Match!"
+		$error = "Email Code does't Match!";
 	}
 	else{
 		$stm = $pdo->prepare("UPDATE students SET email_code=?,is_email_verified=? WHERE id=?");
 		$stm->execute(array(null,1,$user_id));
+
+		unset($_SESSION['email_code_send']);
 		$success = "Your Email Verify Success!";
 	}
 }
 
 
-if(isset($_POST['st_login_btn'])){
-	$st_username = $_POST['st_username'];
-	$st_password = $_POST['st_password'];
+// if(isset($_POST['st_login_btn'])){
+// 	$st_username = $_POST['st_username'];
+// 	$st_password = $_POST['st_password'];
 
 
-	if(empty($st_username)){
-		$error = "Email or Mobile Required!";
-	}
-	else if(empty($st_password)){
-		$error = "Password is Required!";
-	}
-	else{
-		$st_password = SHA1($st_password);
-		//Find Login User
-		$stCount = $pdo->prepare("SELECT id,email,mobile FROM students WHERE (email=? OR mobile=?) AND password=?");
-		$stCount->execute(array($st_username,$st_username,$st_password));
-		$loginCount = $stCount->rowCount();
-		if($loginCount == 1){
-			$stData = $stCount->fetchAll(PDO::FETCH_ASSOC);
-			$_SESSION['st_loggedin'] = $stData;
-			//Get Verify Status
-			$is_email_verified = Student('is_email_verified',$_SESSION['st_loggedin'][0]['id']);
-			$is_mobile_verified = Student('is_mobile_verified',$_SESSION['st_loggedin'][0]['id']);
+// 	if(empty($st_username)){
+// 		$error = "Email or Mobile Required!";
+// 	}
+// 	else if(empty($st_password)){
+// 		$error = "Password is Required!";
+// 	}
+// 	else{
+// 		$st_password = SHA1($st_password);
+// 		//Find Login User
+// 		$stCount = $pdo->prepare("SELECT id,email,mobile FROM students WHERE (email=? OR mobile=?) AND password=?");
+// 		$stCount->execute(array($st_username,$st_username,$st_password));
+// 		$loginCount = $stCount->rowCount();
+// 		if($loginCount == 1){
+// 			$stData = $stCount->fetchAll(PDO::FETCH_ASSOC);
+// 			$_SESSION['st_loggedin'] = $stData;
+// 			//Get Verify Status
+// 			$is_email_verified = Student('is_email_verified',$_SESSION['st_loggedin'][0]['id']);
+// 			$is_mobile_verified = Student('is_mobile_verified',$_SESSION['st_loggedin'][0]['id']);
 
-			if($is_email_verified == 1 AND $is_mobile_verified == 1){
-				header('location:dashboard/index.php');
-			}
-			else{
-				header('location:verify.php');
-			} 
-		}
-		else{
-			$error = "username or Password is wrong! try again!";
-		}
-	}
-}
+// 			if($is_email_verified == 1 AND $is_mobile_verified == 1){
+// 				header('location:dashboard/index.php');
+// 			}
+// 			else{
+// 				header('location:verify.php');
+// 			} 
+// 		}
+// 		else{
+// 			$error = "username or Password is wrong! try again!";
+// 		}
+// 	}
+// }
 
 // if(isset($_SESSION['st_loggedin'])){
 // 	header('location:dashboard/index.php');
@@ -180,13 +182,19 @@ if(isset($_POST['st_login_btn'])){
 						<?php echo $error ?>
 					</div>
 					<?php endif;?>
+
+					<?php if(isset($success)): ?>
+					<div class="alert alert-success">
+						<?php echo $success ?>
+					</div>
+					<?php endif;?>
 					<?php 
 						$email_status = Student('is_email_verified',$_SESSION['st_loggedin'][0]['id']); 
 						$mobile_status = Student('is_mobile_verified',$_SESSION['st_loggedin'][0]['id']); 
 					?>
 					<p>Email: <?php 
 					if($email_status === 1){
-
+						echo '<span class="badge badge-success"> Verified';
 					}
 					else{
 						echo '<span class="badge badge-danger">Not Verified';
@@ -194,13 +202,21 @@ if(isset($_POST['st_login_btn'])){
 					?></p>
 					<p>Mobile: <?php  
 					if($mobile_status === 1){
-
+						echo '<span class="badge badge-success"> Verified';
 					}
 					else{
 						echo '<span class="badge badge-danger">Not Verified';
 					}
 					?></p>
 				<?php if(isset($_SESSION['email_code_send']) == 1) : ?>
+				<form class="contact-bx" method="POST" action="">
+					<div class="row placeani">
+						<div class="col-lg-12 m-b30">
+							<button name="st_email_send_btn" type="submit"  class="btn button-md">Resend Email Code</button>
+						</div>
+					</div>
+				</form>
+
 				<form class="contact-bx" method="POST" action="">
 					<div class="row placeani">
 						<div class="col-lg-12">
