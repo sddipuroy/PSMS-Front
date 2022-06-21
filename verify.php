@@ -232,7 +232,8 @@ if(isset($_POST['st_email_verify_btn'])){
 						</div>
 					</div>
 				</form>
-				<?php else : ?>
+				<?php endif ; ?>
+				<?php if($email_status != 1 AND !isset($_SESSION['email_code_send'])): ?>
 
 				<form class="contact-bx" method="POST" action="">
 					<div class="row placeani">
