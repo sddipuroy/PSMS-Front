@@ -23,7 +23,7 @@ if(isset($_POST['st_email_send_btn'])){
 			<table>
 				<tr>
 					<th>Code</th>
-					<th>.$code.</th>
+					<th>".$code."</th>
 				</tr>
 			</table>
 			<p>Thanks.</p>
@@ -36,12 +36,12 @@ if(isset($_POST['st_email_send_btn'])){
 	$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 	
 	// More headers
-	$headers .= 'From: <'.$user_email.'>' . "\r\n";
+	// $headers .= 'From: <'.$user_email.'>' . "\r\n";
 
 	$send_mail = mail($user_email,$subject,$message,$headers);
 
 	if($send_mail == true){
-		$stm = $pdo->prepare("UPDATE SET email_code=? WHERE id=?");
+		$stm = $pdo->prepare("UPDATE students SET email_code=? WHERE id=?");
 		$stm->execute(array($code,$user_id));
 
 		$_SESSION['email_code_send'] = 1;
@@ -193,7 +193,7 @@ if(isset($_POST['st_email_verify_btn'])){
 						$mobile_status = Student('is_mobile_verified',$_SESSION['st_loggedin'][0]['id']); 
 					?>
 					<p>Email: <?php 
-					if($email_status === 1){
+					if($email_status == 1){
 						echo '<span class="badge badge-success"> Verified';
 					}
 					else{
@@ -201,7 +201,7 @@ if(isset($_POST['st_email_verify_btn'])){
 					}
 					?></p>
 					<p>Mobile: <?php  
-					if($mobile_status === 1){
+					if($mobile_status == 1){
 						echo '<span class="badge badge-success"> Verified';
 					}
 					else{
