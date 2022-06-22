@@ -43,6 +43,8 @@ if(!isset($_SESSION['st_loggedin']) OR $email_status != 1 OR $mobile_status != 1
 	<script src="assets/js/respond.min.js"></script>
 	<![endif]-->
 	
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"/>
+
 	<!-- All PLUGINS CSS ============================================= -->
 	<link rel="stylesheet" type="text/css" href="assets/css/assets.css">
 	<link rel="stylesheet" type="text/css" href="assets/vendors/calendar/fullcalendar.css">
@@ -319,22 +321,28 @@ if(!isset($_SESSION['st_loggedin']) OR $email_status != 1 OR $mobile_status != 1
 		                	<span class="ttr-label">Add listing</span>
 		                </a>
 		            </li>
-					<li>
-						<a href="#" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-user"></i></span>
-		                	<span class="ttr-label">My Profile</span>
-		                	<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
-		                </a>
-		                <ul>
-		                	<li>
-		                		<a href="user-profile.html" class="ttr-material-button"><span class="ttr-label">User Profile</span></a>
-		                	</li>
-		                	<li>
-		                		<a href="teacher-profile.html" class="ttr-material-button"><span class="ttr-label">Teacher Profile</span></a>
-		                	</li>
-		                </ul>
-		            </li>
 		            <li class="ttr-seperate"></li>
+
+					<li>
+						<a href="profile.php" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-user"></i></span>
+		                	<span class="ttr-label">Profile</span>
+		                </a>
+		            </li>
+
+					<li>
+						<a href="change-password.php" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-lock"></i></span>
+		                	<span class="ttr-label">Change Password</span>
+		                </a>
+		            </li>
+
+					<li>
+						<a href="logout.php" class="ttr-material-button">
+							<span class="ttr-icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span>
+		                	<span class="ttr-label">Log Out</span>
+		                </a>
+		            </li>
 				</ul>
 				<!-- sidebar menu end -->
 			</nav>
