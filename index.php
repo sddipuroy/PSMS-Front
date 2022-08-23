@@ -28,8 +28,6 @@ if(isset($_POST['search_btn'])){
 
 			// print_r($result);
 
-
-
 		}
 		else{
 			$error = "Student Result Not Found!";
