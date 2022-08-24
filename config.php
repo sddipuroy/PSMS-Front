@@ -25,10 +25,10 @@ function stRowCount($col,$val){
 }
 
 // Search Result Count
-function ResultCount($id){
+function ResultCount($id,$class_id){
     global $pdo;
-    $stm=$pdo->prepare("SELECT id FROM students_results WHERE st_id=?");
-    $stm->execute(array($id));
+    $stm=$pdo->prepare("SELECT id FROM students_results WHERE st_id=? AND class_id=?");
+    $stm->execute(array($id,$class_id));
     $count = $stm->rowCount();
     return $count;
 }

@@ -19,14 +19,12 @@ if(isset($_POST['search_btn'])){
 	else{
 
 		$st_id = StudentFromMobile('id',$st_mobile);
-		$result_count = ResultCount($st_id);
+		$result_count = ResultCount($st_id,$class_id);
 		if($result_count==1){ 
 			
-			$stm=$pdo->prepare("SELECT * FROM students_results WHERE st_id=?");
-			$stm->execute(array($st_id));
+			$stm=$pdo->prepare("SELECT * FROM students_results WHERE st_id=? AND class_id=?");
+			$stm->execute(array($st_id,$class_id));
 			$result = $stm->fetchAll(PDO::FETCH_ASSOC);
-
-			// print_r($result);
 
 		}
 		else{
